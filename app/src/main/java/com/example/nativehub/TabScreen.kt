@@ -3,6 +3,7 @@ package com.example.nativehub
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
 import android.webkit.WebView
@@ -11,11 +12,9 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
@@ -148,6 +147,18 @@ fun TabScreen(
         }
     }
 
+    // Cleanup ao sair
+    DisposableEffect(Unit) {
+        onDispose {
+            webView?.stopLoading()
+            webView?.webChromeClient = null
+            webView?.webViewClient = null
+            webView?.destroy()
+            webView = null
+            Log.d("TabScreen", "WebView disposed")
+        }
+    }
+
 
     Column(
         modifier =
@@ -207,6 +218,11 @@ fun TabScreen(
                                     )
                                 )
 
+
+                            intent.putExtra(
+                                "tab_index",
+                                index + 1
+                            )
 
                             intent.putExtra(
                                 "site_name",
@@ -286,53 +302,8 @@ fun TabScreen(
                 WebView(ctx)
                     .apply {
 
-
-
-                        settings.javaScriptEnabled =
-                            true
-
-
-                        settings.domStorageEnabled =
-                            true
-
-
-                        settings.databaseEnabled =
-                            true
-
-
-                        settings.allowFileAccess =
-                            true
-
-
-                        settings.allowContentAccess =
-                            true
-
-
-                        settings.javaScriptCanOpenWindowsAutomatically =
-                            true
-
-
-                        settings.setSupportMultipleWindows(
-                            true
-                        )
-
-
-                        settings.loadsImagesAutomatically =
-                            true
-
-
-                        settings.mediaPlaybackRequiresUserGesture =
-                            false
-
-
-                        settings.useWideViewPort =
-                            true
-
-
-                        settings.loadWithOverviewMode =
-                            true
-
-
+                        // Usar configuração centralizada
+                        WebViewConfigManager.configureWebView(this)
 
                         webChromeClient =
                             object : WebChromeClient() {
@@ -340,10 +311,18 @@ fun TabScreen(
                                 override fun onPermissionRequest(
                                     request: PermissionRequest
                                 ) {
-
+                                    Log.d("WebView", "Permission request: ${request.resources.joinToString()}")
                                     request.grant(
                                         request.resources
                                     )
+                                }
+
+                                override fun onGeolocationPermissionsShowPrompt(
+                                    origin: String?,
+                                    callback: android.webkit.GeolocationPermissions.Callback?
+                                ) {
+                                    Log.d("WebView", "Geolocation permission: $origin")
+                                    callback?.invoke(origin, true, true)
                                 }
                             }
 
@@ -352,13 +331,21 @@ fun TabScreen(
                         webViewClient =
                             object : WebViewClient() {
 
-
                                 override fun shouldOverrideUrlLoading(
                                     view: WebView?,
                                     url: String?
                                 ): Boolean {
-
+                                    Log.d("WebView", "URL loading: $url")
                                     return false
+                                }
+
+                                override fun onReceivedError(
+                                    view: WebView?,
+                                    request: android.webkit.WebResourceRequest?,
+                                    error: android.webkit.WebResourceError?
+                                ) {
+                                    Log.e("WebView", "Error: ${error?.description} - Code: ${error?.errorCode}")
+                                    super.onReceivedError(view, request, error)
                                 }
                             }
 
@@ -368,11 +355,20 @@ fun TabScreen(
                         webView =
                             this
 
-
-
                         loadUrl(
                             currentTab.url
                         )
+
+                        // Injetar fixes após carregamento
+                        if (currentTab.url.contains("8u.com")) {
+                            WebViewCompat.setWebMessageListener(
+                                this,
+                                "nativeHub",
+                                setOf("*")
+                            ) { message ->
+                                Log.d("WebMessage", message.toString())
+                            }
+                        }
                     }
             },
 
@@ -388,6 +384,12 @@ fun TabScreen(
                     view.loadUrl(
                         currentTab.url
                     )
+                } else {
+                    // Injetar fixes quando atualizar URL
+                    view.postDelayed({
+                        WebViewConfigManager.injectOverlayFix(view)
+                        WebViewConfigManager.injectCustomCSS(view)
+                    }, 1000)
                 }
             }
         )
