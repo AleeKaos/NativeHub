@@ -20,7 +20,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -57,7 +57,7 @@ fun TabScreen(
 
     // Track back stack para evitar sair prematuramente
     var backPressedTime by remember {
-        mutableStateOf(0L)
+        mutableLongStateOf(0L)
     }
 
 
@@ -187,7 +187,7 @@ fun TabScreen(
             }
 
             // Abas scrolláveis (centro, ocupando o espaço)
-            ScrollableTabRow(
+            PrimaryScrollableTabRow(
 
                 selectedTabIndex =
                     (safeIndex - 1)
@@ -358,17 +358,6 @@ fun TabScreen(
                         loadUrl(
                             currentTab.url
                         )
-
-                        // Injetar fixes após carregamento
-                        if (currentTab.url.contains("8u.com")) {
-                            WebViewCompat.setWebMessageListener(
-                                this,
-                                "nativeHub",
-                                setOf("*")
-                            ) { message ->
-                                Log.d("WebMessage", message.toString())
-                            }
-                        }
                     }
             },
 
