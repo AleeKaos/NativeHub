@@ -21,7 +21,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".NativeHubApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="NativeHub"
@@ -46,120 +45,11 @@
             android:exported="false"
             android:launchMode="singleTask" />
 
-        <!-- GenericTabActivity: Usada para todas as abas 2-20 com processos separados -->
+        <!-- GenericTabActivity: Reutilizável para múltiplos processos -->
         <activity
             android:name=".GenericTabActivity"
             android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab2" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab3" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab4" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab5" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab6" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab7" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab8" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab9" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab10" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab11" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab12" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab13" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab14" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab15" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab16" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab17" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab18" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab19" />
-
-        <activity
-            android:name=".GenericTabActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:process=":tab20" />
+            android:launchMode="singleTask" />
 
         <!-- Settings Activities -->
         <activity
