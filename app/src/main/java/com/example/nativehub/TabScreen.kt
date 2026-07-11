@@ -1,3 +1,5 @@
+@file:Suppress("UNRESOLVED_REFERENCE", "DEPRECATION")
+
 package com.example.nativehub
 
 import android.annotation.SuppressLint
@@ -152,7 +154,7 @@ fun TabScreen(
         onDispose {
             webView?.stopLoading()
             webView?.webChromeClient = null
-            webView?.webViewClient = null
+            webView?.webViewClient = WebViewClient()
             webView?.destroy()
             webView = null
             Log.d("TabScreen", "WebView disposed")
