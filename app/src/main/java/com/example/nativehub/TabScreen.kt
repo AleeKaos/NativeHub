@@ -8,14 +8,27 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -43,6 +56,10 @@ fun TabScreen(
         )
     }
 
+    // Track back stack para evitar sair prematuramente
+    var backPressedTime by remember {
+        mutableStateOf(0L)
+    }
 
 
     fun reloadTabs() {
@@ -116,19 +133,20 @@ fun TabScreen(
 
     BackHandler {
 
-        if (
-            webView?.canGoBack() == true
-        ) {
-
+        if (webView?.canGoBack() == true) {
             webView?.goBack()
-
         } else {
-
-            (context as? Activity)
-                ?.finish()
+            val currentTime = System.currentTimeMillis()
+            
+            // Se o usuário apertou back em menos de 2 segundos novamente, sair da aba
+            if (currentTime - backPressedTime < 2000) {
+                (context as? Activity)?.finish()
+            } else {
+                // Primeiro back: apenas atualiza o timestamp
+                backPressedTime = currentTime
+            }
         }
     }
-
 
 
     Column(
@@ -136,79 +154,91 @@ fun TabScreen(
             Modifier.fillMaxSize()
     ) {
 
-
-
-        ScrollableTabRow(
-
-            selectedTabIndex =
-                (safeIndex - 1)
-                    .coerceAtMost(
-                        (tabs.size - 1)
-                            .coerceAtLeast(0)
-                    )
-
+        // BARRA SUPERIOR: Home + Abas + Configurações
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
-
-
-            tabs.forEachIndexed { index, tab ->
-
-
-
-                Tab(
-
-                    selected =
-                        index == safeIndex - 1,
-
-
-                    onClick = {
-
-
-                        val intent =
-                            Intent(
-                                context,
-                                TabRegistry.activityFor(
-                                    index + 1
-                                )
-                            )
-
-
-                        intent.putExtra(
-                            "site_name",
-                            siteName
-                        )
-
-
-                        intent.putExtra(
-                            "site_url",
-                            tab.url
-                        )
-
-
-                        context.startActivity(
-                            intent
-                        )
-                    },
-
-
-                    text = {
-
-                        Text(
-                            tab.name
-                        )
-                    }
+            // Botão Home (esquerda)
+            IconButton(
+                onClick = {
+                    (context as? Activity)?.finish()
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Voltar para Home"
                 )
             }
 
+            // Abas scrolláveis (centro, ocupando o espaço)
+            ScrollableTabRow(
+
+                selectedTabIndex =
+                    (safeIndex - 1)
+                        .coerceAtMost(
+                            (tabs.size - 1)
+                                .coerceAtLeast(0)
+                        ),
+
+                modifier = Modifier.weight(1f)
+
+            ) {
+
+                tabs.forEachIndexed { index, tab ->
+
+                    Tab(
+
+                        selected =
+                            index == safeIndex - 1,
 
 
-            Tab(
+                        onClick = {
 
-                selected = false,
+                            val intent =
+                                Intent(
+                                    context,
+                                    TabRegistry.activityFor(
+                                        index + 1
+                                    )
+                                )
 
 
+                            intent.putExtra(
+                                "site_name",
+                                siteName
+                            )
+
+
+                            intent.putExtra(
+                                "site_url",
+                                tab.url
+                            )
+
+
+                            context.startActivity(
+                                intent
+                            )
+                        },
+
+                        text = {
+
+                            Text(
+                                tab.name
+                            )
+                        }
+                    )
+                }
+
+            }
+
+            // Botão Configurações (direita)
+            IconButton(
                 onClick = {
-
 
                     context.startActivity(
 
@@ -229,24 +259,23 @@ fun TabScreen(
                                 )
                             }
                     )
-                },
-
-
-                text = {
-
-                    Text("?")
                 }
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Configurações"
+                )
+            }
         }
 
 
-
-
-
+        // WEBVIEW: Ocupa o espaço restante
         AndroidView(
 
             modifier =
-                Modifier.fillMaxSize(),
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
 
 
 
