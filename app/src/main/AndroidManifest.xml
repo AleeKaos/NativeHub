@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.nativehub">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:name=".NativeHubApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="NativeHub"
+        android:theme="@style/Theme.NativeHub">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".EightUActivity"
+            android:exported="false"
+            android:launchMode="singleTask" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="Configurações" />
+
+        <activity
+            android:name=".SiteSettingsActivity"
+            android:exported="false"
+            android:label="Abas do Site" />
+
+        <activity
+            android:name=".TabActivity2"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab2" />
+
+        <activity
+            android:name=".TabActivity3"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab3" />
+
+        <activity
+            android:name=".TabActivity4"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab4" />
+
+        <activity
+            android:name=".TabActivity5"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab5" />
+
+        <activity
+            android:name=".TabActivity6"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab6" />
+
+        <activity
+            android:name=".TabActivity7"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab7" />
+
+        <activity
+            android:name=".TabActivity8"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab8" />
+
+        <activity
+            android:name=".TabActivity9"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab9" />
+
+        <activity
+            android:name=".TabActivity10"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab10" />
+
+        <activity
+            android:name=".TabActivity11"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab11" />
+
+        <activity
+            android:name=".TabActivity12"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab12" />
+
+        <activity
+            android:name=".TabActivity13"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab13" />
+
+        <activity
+            android:name=".TabActivity14"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab14" />
+
+        <activity
+            android:name=".TabActivity15"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab15" />
+
+        <activity
+            android:name=".TabActivity16"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab16" />
+
+        <activity
+            android:name=".TabActivity17"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab17" />
+
+        <activity
+            android:name=".TabActivity18"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab18" />
+
+        <activity
+            android:name=".TabActivity19"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab19" />
+
+        <activity
+            android:name=".TabActivity20"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab20" />
+
+    </application>
+
+</manifest>
