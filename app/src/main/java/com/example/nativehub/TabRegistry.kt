@@ -1,14 +1,10 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.nativehub
 
-import android.app.Activity
-import android.os.Build
+import android.util.Log
 import android.webkit.WebSettings
 import android.webkit.WebView
-import androidx.activity.ComponentActivity
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import androidx.webkit.WebViewCompat
-import kotlin.reflect.KClass
 
 /**
  * Registry que mapeia índices de abas para suas Activities.
@@ -21,26 +17,10 @@ object TabRegistry {
      * Retorna a Activity apropriada para o índice da aba.
      * Todas as abas agora usam GenericTabActivity
      */
-    fun activityFor(tabIndex: Int): Class<out ComponentActivity> {
+    fun activityFor(tabIndex: Int): Class<out androidx.activity.ComponentActivity> {
         return when (tabIndex) {
             1 -> EightUActivity::class.java
             else -> GenericTabActivity::class.java
-        }
-    }
-
-    /**
-     * Cria um Intent para a aba com todas as configurações necessárias
-     */
-    fun createTabIntent(
-        context: android.content.Context,
-        tabIndex: Int,
-        siteName: String,
-        siteUrl: String
-    ): android.content.Intent {
-        return android.content.Intent(context, activityFor(tabIndex)).apply {
-            putExtra("tab_index", tabIndex)
-            putExtra("site_name", siteName)
-            putExtra("site_url", siteUrl)
         }
     }
 }
@@ -62,7 +42,6 @@ object WebViewConfigManager {
 
             // Storage
             domStorageEnabled = true
-            databaseEnabled = true
             allowFileAccess = true
             allowContentAccess = true
 
@@ -78,16 +57,13 @@ object WebViewConfigManager {
             setSupportMultipleWindows(true)
 
             // Mixed Content (para suportar http em https)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-            }
+            mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
 
             // User Agent padrão
             userAgentString = "NativeHub/1.0 (Android)"
 
             // Cache
             cacheMode = WebSettings.LOAD_DEFAULT
-            databasePath = webView.context.getDir("database", android.content.Context.MODE_PRIVATE).path
         }
     }
 
@@ -135,7 +111,7 @@ object WebViewConfigManager {
         """.trimIndent()
 
         webView.evaluateJavascript(fixScript) { result ->
-            android.util.Log.d("WebViewFix", "Overlay fix result: $result")
+            Log.d("WebViewFix", "Overlay fix result: $result")
         }
     }
 
@@ -164,7 +140,7 @@ object WebViewConfigManager {
         """.trimIndent()
 
         webView.evaluateJavascript(cssScript) { result ->
-            android.util.Log.d("WebViewCSS", "CSS injection result: $result")
+            Log.d("WebViewCSS", "CSS injection result: $result")
         }
     }
 }
