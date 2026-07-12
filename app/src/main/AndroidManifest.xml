@@ -21,12 +21,13 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".NativeHubApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="NativeHub"
         android:theme="@style/Theme.NativeHub">
 
-        <!-- MainActivity: Tela inicial -->
+        <!-- MainActivity: Tela inicial (processo padrão do app) -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -39,17 +40,101 @@
 
         </activity>
 
-        <!-- EightUActivity: Aba 1 (processo principal) -->
+        <!-- Abas 1 a 15: cada uma em seu próprio processo (:tabN), garantindo
+             cookies, cache, LocalStorage e sessão independentes por aba. -->
+
+        <!-- EightUActivity: Aba 1 -->
         <activity
             android:name=".EightUActivity"
             android:exported="false"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:process=":tab1" />
 
-        <!-- GenericTabActivity: Reutilizável para múltiplos processos -->
+        <!-- GenericTabActivity: Aba 2 -->
         <activity
             android:name=".GenericTabActivity"
             android:exported="false"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:process=":tab2" />
+
+        <!-- Abas 3 a 15: subclasses finas de GenericTabActivity, uma por processo -->
+        <activity
+            android:name=".Tab3Activity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab3" />
+
+        <activity
+            android:name=".Tab4Activity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab4" />
+
+        <activity
+            android:name=".Tab5Activity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab5" />
+
+        <activity
+            android:name=".Tab6Activity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab6" />
+
+        <activity
+            android:name=".Tab7Activity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab7" />
+
+        <activity
+            android:name=".Tab8Activity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab8" />
+
+        <activity
+            android:name=".Tab9Activity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab9" />
+
+        <activity
+            android:name=".Tab10Activity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab10" />
+
+        <activity
+            android:name=".Tab11Activity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab11" />
+
+        <activity
+            android:name=".Tab12Activity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab12" />
+
+        <activity
+            android:name=".Tab13Activity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab13" />
+
+        <activity
+            android:name=".Tab14Activity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab14" />
+
+        <activity
+            android:name=".Tab15Activity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":tab15" />
 
         <!-- Settings Activities -->
         <activity
@@ -65,3 +150,4 @@
     </application>
 
 </manifest>
+'

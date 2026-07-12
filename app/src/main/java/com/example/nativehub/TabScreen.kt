@@ -1,4 +1,4 @@
-@file:Suppress("UNRESOLVED_REFERENCE", "DEPRECATION")
+@file:Suppress("DEPRECATION")
 
 package com.example.nativehub
 
@@ -189,71 +189,73 @@ fun TabScreen(
             }
 
             // Abas scrolláveis (centro, ocupando o espaço)
-            PrimaryScrollableTabRow(
+            if (tabs.isNotEmpty()) {
+                PrimaryScrollableTabRow(
 
-                selectedTabIndex =
-                    (safeIndex - 1)
-                        .coerceAtMost(
-                            (tabs.size - 1)
-                                .coerceAtLeast(0)
-                        ),
+                    selectedTabIndex =
+                        (safeIndex - 1)
+                            .coerceAtMost(
+                                (tabs.size - 1)
+                                    .coerceAtLeast(0)
+                            ),
 
-                modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f)
 
-            ) {
+                ) {
 
-                tabs.forEachIndexed { index, tab ->
+                    tabs.forEachIndexed { index, tab ->
 
-                    Tab(
+                        Tab(
 
-                        selected =
-                            index == safeIndex - 1,
+                            selected =
+                                index == safeIndex - 1,
 
 
-                        onClick = {
+                            onClick = {
 
-                            val intent =
-                                Intent(
-                                    context,
-                                    TabRegistry.activityFor(
-                                        index + 1
+                                val intent =
+                                    Intent(
+                                        context,
+                                        TabRegistry.activityFor(
+                                            index + 1
+                                        )
                                     )
+
+
+                                intent.putExtra(
+                                    "tab_index",
+                                    index + 1
+                                )
+
+                                intent.putExtra(
+                                    "site_name",
+                                    siteName
                                 )
 
 
-                            intent.putExtra(
-                                "tab_index",
-                                index + 1
-                            )
-
-                            intent.putExtra(
-                                "site_name",
-                                siteName
-                            )
+                                intent.putExtra(
+                                    "site_url",
+                                    tab.url
+                                )
 
 
-                            intent.putExtra(
-                                "site_url",
-                                tab.url
-                            )
+                                context.startActivity(
+                                    intent
+                                )
+                            },
 
+                            text = {
 
-                            context.startActivity(
-                                intent
-                            )
-                        },
+                                Text(
+                                    tab.name
+                                )
+                            }
+                        )
+                    }
 
-                        text = {
-
-                            Text(
-                                tab.name
-                            )
-                        }
-                    )
                 }
 
             }
-
             // Botão Configurações (direita)
             IconButton(
                 onClick = {
@@ -334,10 +336,10 @@ fun TabScreen(
                             object : WebViewClient() {
 
                                 override fun shouldOverrideUrlLoading(
-                                    view: WebView?,
-                                    url: String?
+                                    view: WebView,
+                                    request: android.webkit.WebResourceRequest
                                 ): Boolean {
-                                    Log.d("WebView", "URL loading: $url")
+                                    Log.d("WebView", "URL loading: ${request.url}")
                                     return false
                                 }
 

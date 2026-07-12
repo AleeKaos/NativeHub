@@ -10,14 +10,18 @@ class NativeHubApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val processName = getProcessName()
-
-        Log.d(
-            "NATIVEHUB",
-            "PROCESSO = $processName"
-        )
-
+        // Application.getProcessName() só existe a partir da API 28 (P).
+        // Como minSdk = 24, chamá-lo incondicionalmente derrubava o app
+        // (NoSuchMethodError) em API 24-27. Por isso toda a leitura do nome
+        // do processo agora fica dentro do guard de versão.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+
+            val processName = getProcessName()
+
+            Log.d(
+                "NATIVEHUB",
+                "PROCESSO = $processName"
+            )
 
             if (processName != packageName) {
 
@@ -41,6 +45,12 @@ class NativeHubApplication : Application() {
                     )
                 }
             }
+        } else {
+
+            Log.d(
+                "NATIVEHUB",
+                "SDK < P - setDataDirectorySuffix não aplicável nesta versão"
+            )
         }
     }
 }

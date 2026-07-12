@@ -8,18 +8,33 @@ import android.webkit.WebView
 
 /**
  * Registry que mapeia índices de abas para suas Activities.
- * Antes: 20 activities duplicadas (TabActivity2 até TabActivity20)
- * Depois: Uma única GenericTabActivity reutilizável
+ * Cada Activity abaixo tem um android:process próprio (:tab1 a :tab15)
+ * declarado no AndroidManifest.xml, garantindo processo, cookies, cache,
+ * LocalStorage e sessão independentes por aba.
  */
 object TabRegistry {
 
     /**
-     * Retorna a Activity apropriada para o índice da aba.
-     * Todas as abas agora usam GenericTabActivity
+     * Retorna a Activity (e, portanto, o processo) correspondente ao índice da aba.
+     * tabIndex fora do intervalo 1-15 cai no fallback (GenericTabActivity / :tab2).
      */
     fun activityFor(tabIndex: Int): Class<out androidx.activity.ComponentActivity> {
         return when (tabIndex) {
             1 -> EightUActivity::class.java
+            2 -> GenericTabActivity::class.java
+            3 -> Tab3Activity::class.java
+            4 -> Tab4Activity::class.java
+            5 -> Tab5Activity::class.java
+            6 -> Tab6Activity::class.java
+            7 -> Tab7Activity::class.java
+            8 -> Tab8Activity::class.java
+            9 -> Tab9Activity::class.java
+            10 -> Tab10Activity::class.java
+            11 -> Tab11Activity::class.java
+            12 -> Tab12Activity::class.java
+            13 -> Tab13Activity::class.java
+            14 -> Tab14Activity::class.java
+            15 -> Tab15Activity::class.java
             else -> GenericTabActivity::class.java
         }
     }
