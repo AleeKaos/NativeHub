@@ -66,6 +66,10 @@ private fun SettingsScreen() {
         mutableStateOf("")
     }
 
+    var errorMessage by remember {
+        mutableStateOf<String?>(null)
+    }
+
 
 
     fun reload() {
@@ -83,6 +87,7 @@ private fun SettingsScreen() {
 
             onDismissRequest = {
                 showDialog = false
+                errorMessage = null
             },
 
 
@@ -140,6 +145,22 @@ private fun SettingsScreen() {
                         modifier =
                             Modifier.fillMaxWidth()
                     )
+
+                    if (errorMessage != null) {
+
+                        Spacer(
+                            modifier =
+                                Modifier.height(8.dp)
+                        )
+
+                        Text(
+                            text = errorMessage ?: "",
+                            color =
+                                MaterialTheme.colorScheme.error,
+                            style =
+                                MaterialTheme.typography.bodySmall
+                        )
+                    }
                 }
             },
 
@@ -183,11 +204,18 @@ private fun SettingsScreen() {
                         if (editIndex == -1) {
 
 
-                            PrefsHelper.addSite(
-                                context,
-                                siteName,
-                                finalUrl
-                            )
+                            val added =
+                                PrefsHelper.addSite(
+                                    context,
+                                    siteName,
+                                    finalUrl
+                                )
+
+                            if (!added) {
+                                errorMessage =
+                                    "Limite de ${PrefsHelper.MAX_SITES} sites atingido"
+                                return@Button
+                            }
 
 
                         } else {
@@ -220,6 +248,7 @@ private fun SettingsScreen() {
                         siteUrl = ""
 
                         editIndex = -1
+                        errorMessage = null
 
                         showDialog = false
                     }
@@ -281,6 +310,7 @@ private fun SettingsScreen() {
                 siteUrl = ""
 
                 editIndex = -1
+                errorMessage = null
 
                 showDialog = true
             },
@@ -444,6 +474,7 @@ private fun SettingsScreen() {
                                 editIndex =
                                     index
 
+                                errorMessage = null
 
                                 showDialog = true
 

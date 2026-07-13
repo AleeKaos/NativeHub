@@ -56,8 +56,13 @@ fun HomeScreen() {
                     context.startActivity(
                         Intent(
                             context,
-                            EightUActivity::class.java
+                            TabRegistry.activityFor(site.tabIndex)
                         ).apply {
+
+                            putExtra(
+                                "tab_index",
+                                site.tabIndex
+                            )
 
                             putExtra(
                                 "site_name",

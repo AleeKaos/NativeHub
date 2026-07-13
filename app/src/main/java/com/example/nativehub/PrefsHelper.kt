@@ -14,6 +14,7 @@ data class TabItem(
 data class Site(
     val name: String,
     val url: String,
+    val tabIndex: Int,
     val tabs: List<TabItem> = emptyList()
 )
 
@@ -22,6 +23,10 @@ object PrefsHelper {
 
     private const val PREFS_NAME = "tabs_prefs"
     private const val SITES_KEY = "sites"
+
+    // Existe uma Activity/processo isolado (:tab1 a :tab15) pra cada slot -
+    // ver TabRegistry.activityFor() e o AndroidManifest.xml.
+    const val MAX_SITES = 15
 
 
     fun saveName(
@@ -155,6 +160,13 @@ object PrefsHelper {
                                 "url"
                             ),
 
+                        // -1 = site salvo antes de existir esse campo (dado antigo)
+                        tabIndex =
+                            obj.optInt(
+                                "tabIndex",
+                                -1
+                            ),
+
                         tabs = tabs
                     )
                 )
@@ -166,7 +178,30 @@ object PrefsHelper {
         }
 
 
-        return result
+        // Migração/reparo: qualquer site sem slot válido (-1, fora de 1..15,
+        // ou duplicado com outro site) recebe o menor slot livre. Isso cobre
+        // tanto dados salvos antes desse campo existir quanto qualquer
+        // inconsistência futura - cada site sempre acaba com um slot único,
+        // que é o que garante processo/cookies/localStorage isolados de verdade.
+        val usedSlots = mutableSetOf<Int>()
+        var repaired = false
+
+        val fixedResult = result.map { site ->
+            if (site.tabIndex in 1..MAX_SITES && usedSlots.add(site.tabIndex)) {
+                site
+            } else {
+                repaired = true
+                val freeSlot = (1..MAX_SITES).firstOrNull { it !in usedSlots } ?: 1
+                usedSlots.add(freeSlot)
+                site.copy(tabIndex = freeSlot)
+            }
+        }
+
+        if (repaired) {
+            saveSites(context, fixedResult)
+        }
+
+        return fixedResult
     }
 
 
@@ -198,6 +233,11 @@ object PrefsHelper {
             obj.put(
                 "url",
                 site.url
+            )
+
+            obj.put(
+                "tabIndex",
+                site.tabIndex
             )
 
 
@@ -261,16 +301,30 @@ object PrefsHelper {
 
 
 
+    /**
+     * Adiciona um site, atribuindo o menor slot (1..MAX_SITES) ainda livre -
+     * esse slot é o que define para sempre qual processo isolado (:tabN) o
+     * site usa. Retorna false sem adicionar nada se os MAX_SITES slots já
+     * estiverem todos ocupados.
+     */
     fun addSite(
         context: Context,
         name: String,
         url: String
-    ) {
+    ): Boolean {
 
 
         val sites =
             getSites(context)
                 .toMutableList()
+
+
+        val usedSlots =
+            sites.map { it.tabIndex }.toSet()
+
+        val freeSlot =
+            (1..MAX_SITES).firstOrNull { it !in usedSlots }
+                ?: return false
 
 
 
@@ -294,6 +348,7 @@ object PrefsHelper {
             Site(
                 name = name,
                 url = finalUrl,
+                tabIndex = freeSlot,
 
                 tabs = listOf(
                     TabItem(
@@ -310,6 +365,8 @@ object PrefsHelper {
             context,
             sites
         )
+
+        return true
     }
 
 

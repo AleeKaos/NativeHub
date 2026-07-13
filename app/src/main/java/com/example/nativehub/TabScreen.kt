@@ -62,6 +62,17 @@ fun TabScreen(
         mutableLongStateOf(0L)
     }
 
+    // Qual das ABAS INTERNAS do site (site.tabs) está sendo exibida agora.
+    // Isso é só estado de UI local - NUNCA deve abrir outra Activity/processo,
+    // porque as abas internas são páginas do MESMO site (mesma conta), então
+    // precisam ficar na mesma WebView/processo pra compartilhar a sessão.
+    // Quem decide o processo isolado é o site.tabIndex (fixo por site), não isso.
+    // remember(siteName) reseta pra 0 se essa Activity passar a representar
+    // outro site (reaproveitamento de slot depois de remover um site).
+    var selectedTabPosition by remember(siteName) {
+        mutableStateOf(0)
+    }
+
 
     fun reloadTabs() {
 
@@ -115,14 +126,9 @@ fun TabScreen(
 
 
 
-    val safeIndex =
-        tabIndex.coerceAtLeast(1)
-
-
-
     val currentTab =
         tabs.getOrNull(
-            safeIndex - 1
+            selectedTabPosition
         )
             ?: tabs.firstOrNull()
             ?: TabItem(
@@ -193,8 +199,9 @@ fun TabScreen(
                 PrimaryScrollableTabRow(
 
                     selectedTabIndex =
-                        (safeIndex - 1)
-                            .coerceAtMost(
+                        selectedTabPosition
+                            .coerceIn(
+                                0,
                                 (tabs.size - 1)
                                     .coerceAtLeast(0)
                             ),
@@ -208,40 +215,10 @@ fun TabScreen(
                         Tab(
 
                             selected =
-                                index == safeIndex - 1,
-
+                                index == selectedTabPosition,
 
                             onClick = {
-
-                                val intent =
-                                    Intent(
-                                        context,
-                                        TabRegistry.activityFor(
-                                            index + 1
-                                        )
-                                    )
-
-
-                                intent.putExtra(
-                                    "tab_index",
-                                    index + 1
-                                )
-
-                                intent.putExtra(
-                                    "site_name",
-                                    siteName
-                                )
-
-
-                                intent.putExtra(
-                                    "site_url",
-                                    tab.url
-                                )
-
-
-                                context.startActivity(
-                                    intent
-                                )
+                                selectedTabPosition = index
                             },
 
                             text = {
